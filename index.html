@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+ <meta charset="UTF-8">
+
+ <meta name="viewport"
+ content="width=device-width, initial-scale=1.0">
+
+ <meta name="theme-color" content="#080808">
+
+ <title>PayClock</title>
+
+ <style>
+
+ * {
+ box-sizing: border-box;
+ }
+
+ body {
+ margin: 0;
+ background: #080808;
+ color: white;
+ font-family: Arial, sans-serif;
+ min-height: 100vh;
+ }
+
+ .app {
+ width: 100%;
+ max-width: 450px;
+ margin: auto;
+ padding: 25px 18px 30px;
+ }
+
+ h1 {
+ text-align: center;
+ font-size: 34px;
+ margin: 5px 0;
+ }
+
+ .subtitle {
+ text-align: center;
+ color: #888;
+ margin-bottom: 25px;
+ }
+
+ .card {
+ background: #151515;
+ border-radius: 20px;
+ padding: 22px;
+ margin-bottom: 16px;
+ }
+
+ label {
+ display: block;
+ color: #aaa;
+ margin-bottom: 8px;
+ }
+
+ input {
+ width: 100%;
+ padding: 15px;
+ background: #222;
+ color: white;
+ border: 1px solid #333;
+ border-radius: 12px;
+ font-size: 22px;
+ text-align: center;
+ outline: none;
+ }
+
+ input:focus {
+ border-color: #22c55e;
+ }
+
+ .money {
+ text-align: center;
+ font-size: 62px;
+ font-weight: bold;
+ margin-top: 5px;
+ }
+
+ .earned {
+ text-align: center;
+ color: #888;
+ }
+
+ .status {
+ text-align: center;
+ font-weight: bold;
+ margin-top: 18px;
+ }
+
+ .working {
+ color: #22c55e;
+ }
+
+ .onbreak {
+ color: #eab308;
+ }
+
+ .stopped {
+ color: #ef4444;
+ }
+
+ .timer {
+ text-align: center;
+ font-size: 32px;
+ margin-top: 12px;
+ letter-spacing: 2px;
+ }
+
+ .buttons {
+ display: grid;
+ grid-template-columns: 1fr 1fr;
+ gap: 10px;
+ }
+
+ button {
+ padding: 16px;
+ border: none;
+ border-radius: 12px;
+ font-size: 17px;
+ font-weight: bold;
+ cursor: pointer;
+ }
+
+ button:active {
+ transform: scale(0.97);
+ }
+
+ .start {
+ background: #22c55e;
+ color: black;
+ }
+
+ .stop {
+ background: #ef4444;
+ color: white;
+ }
+
+ .breakButton {
+ background: #eab308;
+ color: black;
+ grid-column: span 2;
+ }
+
+ .reset {
+ background: #333;
+ color: white;
+ grid-column: span 2;
+ }
+
+ .stats {
+ display: grid;
+ grid-template-columns: 1fr 1fr;
+ gap: 10px;
+ }
+
+ .stat {
+ background: #202020;
+ padding: 15px;
+ border-radius: 14px;
+ text-align: center;
+ }
+
+ .statTitle {
+ color: #888;
+ font-size: 12px;
+ margin-bottom: 6px;
+ }
+
+ .statValue {
+ font-size: 21px;
+ font-weight: bold;
+ }
+
+ .overtime {
+ color: #f97316;
+ }
+
+ .footer {
+ text-align: center;
+ color: #666;
+ font-size: 14px;
+ margin-top: 30px;
+ padding-bottom: 10px;
+ }
+
+ </style>
+
+</head>
+
+
+<body>
+
+
+<div class="app">
+
+
+ <h1> PayClock</h1>
+
+ <div class="subtitle">
+ Personal Work & Earnings Tracker
+ </div>
+
+
+ <!-- HOURLY PAY -->
+
+ <div class="card">
+
+ <label>
+ Hourly Pay
+ </label>
+
+ <input
+ id="hourlyPay"
+ type="number"
+ placeholder="15.00"
+ step="0.01"
+ min="0"
+ >
+
+ </div>
+
+
+ <!-- MAIN EARNINGS -->
+
+ <div class="card">
+
+ <div
+ id="money"
+ class="money"
+ >
+ $0.00
+ </div>
+
+ <div class="earned">
+ earned this shift
+ </div>
+
+
+ <div
+ id="status"
+ class="status stopped"
+ >
+ ● NOT WORKING
+ </div>
+
+
+ <div
+ id="timer"
+ class="timer"
+ >
+ 00:00:00
+ </div>
+
+ </div>
+
+
+ <!-- BUTTONS -->
+
+ <div class="buttons">
+
+ <button
+ class="start"
+ onclick="startWork()"
+ >
+ START
+ </button>
+
+
+ <button
+ class="stop"
+ onclick="stopWork()"
+ >
+ ■ STOP
+ </button>
+
+
+ <button
+ id="breakButton"
+ class="breakButton"
+ onclick="toggleBreak()"
+ >
+ START BREAK
+ </button>
+
+
+ <button
+ class="reset"
+ onclick="resetShift()"
+ >
+ RESET SHIFT
+ </button>
+
+ </div>
+
+
+ <br>
+
+
+ <!-- STATS -->
+
+ <div class="card">
+
+ <h2>
+ Shift Stats
+ </h2>
+
+
+ <div class="stats">
+
+
+ <div class="stat">
+
+ <div class="statTitle">
+ HOURLY RATE
+ </div>
+
+ <div
+ id="rate"
+ class="statValue"
+ >
+ $0.00
+ </div>
+
+ </div>
+
+
+ <div class="stat">
+
+ <div class="statTitle">
+ HOURS WORKED
+ </div>
+
+ <div
+ id="hours"
+ class="statValue"
+ >
+ 0.00
+ </div>
+
+ </div>
+
+
+ <div class="stat">
+
+ <div class="statTitle">
+ REGULAR PAY
+ </div>
+
+ <div
+ id="regularPay"
+ class="statValue"
+ >
+ $0.00
+ </div>
+
+ </div>
+
+
+ <div class="stat">
+
+ <div class="statTitle">
+ OVERTIME
+ </div>
+
+ <div
+ id="overtimePay"
+ class="statValue overtime"
+ >
+ $0.00
+ </div>
+
+ </div>
+
+
+ </div>
+
+ </div>
+
+
+ <!-- SAVED STATUS -->
+
+ <div class="card">
+
+ <div
+ id="savedMessage"
+ style="
+ text-align:center;
+ color:#888;
+ font-size:14px;
+ "
+ >
+ Shift data is saved automatically.
+ </div>
+
+ </div>
+
+
+ <!-- FOOTER -->
+
+ <div class="footer">
+
+ Made by: Mark
+
+ </div>
+
+
+</div>
+
+
+<script>
+
+
+/* =========================================
+ PAYCLOCK DATA
+========================================= */
+
+
+let appData = {
+
+ hourlyPay: 0,
+
+ status: "stopped",
+
+ totalWorkedSeconds: 0,
+
+ workStartedAt: null,
+
+ breakStartedAt: null
+
+};
+
+
+/* =========================================
+ LOAD SAVED DATA
+========================================= */
+
+
+function loadData() {
+
+ const saved =
+ localStorage.getItem(
+ "payClockData"
+ );
+
+
+ if (saved) {
+
+ try {
+
+ appData =
+ JSON.parse(saved);
+
+ }
+
+ catch {
+
+ appData = {
+
+ hourlyPay: 0,
+
+ status: "stopped",
+
+ totalWorkedSeconds: 0,
+
+ workStartedAt: null,
+
+ breakStartedAt: null
+
+ };
+
+ }
+
+ }
+
+
+ document.getElementById(
+ "hourlyPay"
+ ).value =
+ appData.hourlyPay || "";
+
+
+ restoreRunningTime();
+
+ updateDisplay();
+
+}
+
+
+/* =========================================
+ SAVE DATA
+========================================= */
+
+
+function saveData() {
+
+ localStorage.setItem(
+ "payClockData",
+ JSON.stringify(appData)
+ );
+
+
+ document.getElementById(
+ "savedMessage"
+ ).textContent =
+ "✓ Saved automatically";
+
+}
+
+
+/* =========================================
+ CALCULATE CURRENT WORK TIME
+========================================= */
+
+
+function getWorkedSeconds() {
+
+
+ let seconds =
+ appData.totalWorkedSeconds || 0;
+
+
+ /*
+ If currently working,
+ add the time since START.
+ */
+
+ if (
+ appData.status === "working" &&
+ appData.workStartedAt
+ ) {
+
+ const now =
+ Date.now();
+
+
+ seconds +=
+ (
+ now -
+ appData.workStartedAt
+ ) / 1000;
+
+ }
+
+
+ /*
+ If on break, we do NOT add
+ time since the break began.
+ */
+
+
+ return seconds;
+
+}
+
+
+/* =========================================
+ RESTORE AFTER CLOSING / POWER OFF
+========================================= */
+
+
+function restoreRunningTime() {
+
+
+ /*
+ Nothing special needs to happen
+ if stopped.
+ */
+
+
+ if (
+ appData.status === "stopped"
+ ) {
+
+ return;
+
+ }
+
+
+ /*
+ If the app was working when closed,
+ workStartedAt contains the exact
+ timestamp.
+
+ When the app opens again,
+ getWorkedSeconds() calculates
+ the time that passed.
+ */
+
+
+ if (
+ appData.status === "working"
+ ) {
+
+ startDisplayUpdater();
+
+ }
+
+
+ /*
+ If the app was on break,
+ we simply restore the break state.
+ */
+
+
+ if (
+ appData.status === "break"
+ ) {
+
+ updateBreakButton();
+
+ }
+
+}
+
+
+/* =========================================
+ START WORK
+========================================= */
+
+
+function startWork() {
+
+
+ if (
+ appData.status === "working"
+ ) {
+
+ return;
+
+ }
+
+
+ const pay =
+ parseFloat(
+ document.getElementById(
+ "hourlyPay"
+ ).value
+ );
+
+
+ if (
+ !pay ||
+ pay <= 0
+ ) {
+
+ alert(
+ "Enter your hourly pay first!"
+ );
+
+ return;
+
+ }
+
+
+ appData.hourlyPay =
+ pay;
+
+
+ /*
+ If coming back from a break,
+ simply start a new work timer.
+ */
+
+
+ appData.status =
+ "working";
+
+
+ appData.workStartedAt =
+ Date.now();
+
+
+ appData.breakStartedAt =
+ null;
+
+
+ saveData();
+
+ updateDisplay();
+
+ startDisplayUpdater();
+
+}
+
+
+/* =========================================
+ STOP WORK
+========================================= */
+
+
+function stopWork() {
+
+
+ if (
+ appData.status === "stopped"
+ ) {
+
+ return;
+
+ }
+
+
+ /*
+ Save any work that happened
+ since the last start.
+ */
+
+
+ if (
+ appData.status === "working" &&
+ appData.workStartedAt
+ ) {
+
+ const now =
+ Date.now();
+
+
+ appData.totalWorkedSeconds +=
+ (
+ now -
+ appData.workStartedAt
+ ) / 1000;
+
+ }
+
+
+ appData.status =
+ "stopped";
+
+
+ appData.workStartedAt =
+ null;
+
+
+ appData.breakStartedAt =
+ null;
+
+
+ saveData();
+
+ updateDisplay();
+
+}
+
+
+/* =========================================
+ BREAK
+========================================= */
+
+
+function toggleBreak() {
+
+
+ /*
+ START BREAK
+ */
+
+ if (
+ appData.status === "working"
+ ) {
+
+
+ /*
+ First save all work up to
+ the exact moment the break starts.
+ */
+
+
+ if (
+ appData.workStartedAt
+ ) {
+
+ const now =
+ Date.now();
+
+
+ appData.totalWorkedSeconds +=
+ (
+ now -
+ appData.workStartedAt
+ ) / 1000;
+
+ }
+
+
+ appData.status =
+ "break";
+
+
+ appData.workStartedAt =
+ null;
+
+
+ appData.breakStartedAt =
+ Date.now();
+
+
+ saveData();
+
+ updateDisplay();
+
+ return;
+
+ }
+
+
+ /*
+ END BREAK
+ */
+
+ if (
+ appData.status === "break"
+ ) {
+
+
+ appData.status =
+ "working";
+
+
+ appData.workStartedAt =
+ Date.now();
+
+
+ appData.breakStartedAt =
+ null;
+
+
+ saveData();
+
+ updateDisplay();
+
+ startDisplayUpdater();
+
+ }
+
+}
+
+
+/* =========================================
+ RESET SHIFT
+========================================= */
+
+
+function resetShift() {
+
+
+ const answer =
+ confirm(
+ "Are you sure you want to erase this shift?"
+ );
+
+
+ if (!answer) {
+
+ return;
+
+ }
+
+
+ appData = {
+
+ hourlyPay:
+ parseFloat(
+ document.getElementById(
+ "hourlyPay"
+ ).value
+ ) || 0,
+
+ status:
+ "stopped",
+
+ totalWorkedSeconds:
+ 0,
+
+ workStartedAt:
+ null,
+
+ breakStartedAt:
+ null
+
+ };
+
+
+ saveData();
+
+ updateDisplay();
+
+}
+
+
+/* =========================================
+ DISPLAY TIMER
+========================================= */
+
+
+let displayTimer = null;
+
+
+function startDisplayUpdater() {
+
+
+ clearInterval(
+ displayTimer
+ );
+
+
+ displayTimer =
+ setInterval(
+ function() {
+
+ updateDisplay();
+
+ },
+ 250
+ );
+
+}
+
+
+/* =========================================
+ UPDATE EVERYTHING ON SCREEN
+========================================= */
+
+
+function updateDisplay() {
+
+
+ const seconds =
+ getWorkedSeconds();
+
+
+ const hours =
+ seconds / 3600;
+
+
+ const pay =
+ parseFloat(
+ appData.hourlyPay
+ ) || 0;
+
+
+ /*
+ First 40 hours = regular pay.
+ */
+
+
+ const regularHours =
+ Math.min(
+ hours,
+ 40
+ );
+
+
+ /*
+ Anything beyond 40 hours
+ is calculated as 1.5x.
+ */
+
+
+ const overtimeHours =
+ Math.max(
+ hours - 40,
+ 0
+ );
+
+
+ const regularPay =
+ regularHours *
+ pay;
+
+
+ const overtimePay =
+ overtimeHours *
+ pay *
+ 1.5;
+
+
+ const total =
+ regularPay +
+ overtimePay;
+
+
+ /*
+ MONEY
+ */
+
+
+ document.getElementById(
+ "money"
+ ).textContent =
+ "$" +
+ total.toFixed(2);
+
+
+ /*
+ RATE
+ */
+
+
+ document.getElementById(
+ "rate"
+ ).textContent =
+ "$" +
+ pay.toFixed(2);
+
+
+ /*
+ HOURS
+ */
+
+
+ document.getElementById(
+ "hours"
+ ).textContent =
+ hours.toFixed(2);
+
+
+ /*
+ REGULAR PAY
+ */
+
+
+ document.getElementById(
+ "regularPay"
+ ).textContent =
+ "$" +
+ regularPay.toFixed(2);
+
+
+ /*
+ OVERTIME
+ */
+
+
+ document.getElementById(
+ "overtimePay"
+ ).textContent =
+ "$" +
+ overtimePay.toFixed(2);
+
+
+ /*
+ TIMER
+ */
+
+
+ const h =
+ Math.floor(
+ seconds / 3600
+ );
+
+
+ const m =
+ Math.floor(
+ (seconds % 3600) / 60
+ );
+
+
+ const s =
+ Math.floor(
+ seconds % 60
+ );
+
+
+ document.getElementById(
+ "timer"
+ ).textContent =
+
+ String(h).padStart(
+ 2,
+ "0"
+ )
+ + ":"
+ +
+ String(m).padStart(
+ 2,
+ "0"
+ )
+ + ":"
+ +
+ String(s).padStart(
+ 2,
+ "0"
+ );
+
+
+ /*
+ STATUS
+ */
+
+
+ const status =
+ document.getElementById(
+ "status"
+ );
+
+
+ if (
+ appData.status === "working"
+ ) {
+
+ status.textContent =
+ "● WORKING";
+
+ status.className =
+ "status working";
+
+ }
+
+
+ else if (
+ appData.status === "break"
+ ) {
+
+ status.textContent =
+ "● ON BREAK";
+
+ status.className =
+ "status onbreak";
+
+ }
+
+
+ else {
+
+ status.textContent =
+ "● NOT WORKING";
+
+ status.className =
+ "status stopped";
+
+ }
+
+
+ updateBreakButton();
+
+}
+
+
+/* =========================================
+ BREAK BUTTON
+========================================= */
+
+
+function updateBreakButton() {
+
+
+ const button =
+ document.getElementById(
+ "breakButton"
+ );
+
+
+ if (
+ appData.status === "working"
+ ) {
+
+ button.textContent =
+ " START BREAK";
+
+ }
+
+
+ else if (
+ appData.status === "break"
+ ) {
+
+ button.textContent =
+ " END BREAK";
+
+ }
+
+
+ else {
+
+ button.textContent =
+ " START BREAK";
+
+ }
+
+}
+
+
+/* =========================================
+ HOURLY PAY CHANGE
+========================================= */
+
+
+document
+ .getElementById(
+ "hourlyPay"
+ )
+ .addEventListener(
+ "input",
+ function() {
+
+ appData.hourlyPay =
+ parseFloat(
+ this.value
+ ) || 0;
+
+
+ saveData();
+
+ updateDisplay();
+
+ }
+ );
+
+
+/* =========================================
+ START APP
+========================================= */
+
+
+loadData();
+
+
+</script>
+
+
+</body>
+
+</html>
